@@ -102,6 +102,8 @@ async function getWeather() {
     description.textContent = info.text;
     weatherIcon.textContent = info.icon;
 
+    getLocalTime(weatherData.timezone);
+    
     humidity.textContent =
       "Humidity: " +
       weatherData.hourly.relativehumidity_2m[0] +
@@ -117,4 +119,42 @@ async function getWeather() {
     // Network or HTTP errors
     alert("Error: " + error.message);
   }
+}
+
+// ===================================
+// TASK 3 : JQUERY AJAX LOCAL TIME API
+// ===================================
+
+// Function to get time using timezone
+function getLocalTime(timezone) {
+
+  $.getJSON(`https://worldtimeapi.org/api/timezone/${timezone}`)
+
+    // If request successful
+    .done(function (data) {
+
+      $("#local-time").text(
+        "Local Time: " +
+        new Date(data.datetime).toLocaleTimeString()
+      );
+    })
+
+    // If request fails
+    .fail(function () {
+
+      // Use browser local time
+      $("#local-time").text(
+        "Local Time: " +
+        new Date().toLocaleTimeString()
+      );
+    })
+
+    // Runs always (success or fail)
+    .always(function () {
+
+      console.log(
+        "Time API request completed:",
+        new Date()
+      );
+    });
 }

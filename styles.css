@@ -41,7 +41,7 @@
         }
 
         /* Current weather card */
-        #current-card {
+        #weather-card {
             background: white;
             padding: 20px;
             border-radius: 8px;
