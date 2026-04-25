@@ -40,6 +40,29 @@ function validateInput(city) {
   return true;
 }
 
+function populateForecast(data) {
+  const row      = document.getElementById("forecast-row");
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  row.innerHTML  = "";
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(data.daily.time[i] + "T00:00:00");
+    const day  = dayNames[date.getDay()];
+    const code = data.daily.weathercode[i];
+    const info = weatherLookup[code] || { text: "Unknown", icon: "❓" };
+    const high = data.daily.temperature_2m_max[i].toFixed(0);
+    const low  = data.daily.temperature_2m_min[i].toFixed(0);
+
+    row.innerHTML += `
+      <div class="forecast-card">
+        <p class="fc-day">${day}</p>
+        <p class="fc-icon">${info.icon}</p>
+        <p class="fc-high">${high}°</p>
+        <p class="fc-low">${low}°</p>
+      </div>`;
+  }
+}
+
 // =============================================
 // TASK 4 : STEP 2 - AbortController timeout
 // Cancels the request if it takes over 10 seconds
@@ -143,6 +166,7 @@ async function getWeather() {
     weatherIcon.textContent  = info.icon;
 
     getLocalTime(weatherData.timezone);
+    populateForecast(weatherData);
 
     humidity.textContent  = "Humidity: "    + weatherData.hourly.relativehumidity_2m[0] + "%";
     windSpeed.textContent = "Wind Speed: "  + weatherData.current_weather.windspeed + " km/h";

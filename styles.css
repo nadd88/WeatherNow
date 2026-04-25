@@ -97,6 +97,12 @@
             margin: 4px 0;
         }
 
+        #local-time {
+    color: #3b82f6;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
         /* Skeleton sizes for forecast cards */
         .fc-day.skeleton  { height: 12px; width: 30px; margin: 0 auto 6px; }
         .fc-icon.skeleton { height: 30px; width: 30px; margin: 0 auto 6px; border-radius: 6px; }
