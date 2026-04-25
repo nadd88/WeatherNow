@@ -1,0 +1,104 @@
+ body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-container input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 300px;
+        }
+
+        .search-container button {
+            padding: 8px 18px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Hidden utility */
+        .hidden {
+            display: none;
+        }
+
+        /* Current weather card */
+        #current-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Skeleton animation */
+        @keyframes shimmer {
+            0%   { background-position: -200% 0; }
+            100% { background-position:  200% 0; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-title  { height: 28px; width: 200px; }
+        .skeleton-text   { height: 18px; width: 150px; }
+        .skeleton-icon   { height: 60px; width: 60px;  }
+
+        /* Forecast section */
+        #forecast-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #forecast-section h2 {
+            margin-bottom: 16px;
+        }
+
+        #forecast-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .forecast-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .forecast-card p {
+            margin: 4px 0;
+        }
+
+        /* Skeleton sizes for forecast cards */
+        .fc-day.skeleton  { height: 12px; width: 30px; margin: 0 auto 6px; }
+        .fc-icon.skeleton { height: 30px; width: 30px; margin: 0 auto 6px; border-radius: 6px; }
+        .fc-high.skeleton { height: 14px; width: 35px; margin: 0 auto 4px; }
+        .fc-low.skeleton  { height: 12px; width: 28px; margin: 0 auto; }

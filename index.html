@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherNow</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <!-- HEADER: only title + search bar -->
+    <header>
+        <span id="logo-icon">⛅</span>
+        <span id="logo-text">WeatherNow</span>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Enter city name..." />
+            <button id="search-button">Search</button>
+        </div>
+    </header>
+
+    <!-- MAIN: cards go here, outside header -->
+    <main>
+
+        <!-- Current weather card -->
+        <section id="weather-card" class="hidden">
+            <h2 id="city-name"></h2>
+            <p id="temperature"></p>
+            <p id="description"></p>
+            <p id="weather-icon"></p>
+            <p id="humidity"></p>
+            <p id="wind-speed"></p>
+            <p id="local-time"></p>
+        </section>
+
+        <!-- 7-Day Forecast -->
+        <section id="forecast-section" class="hidden">
+            <h2>7-Day Forecast</h2>
+
+            <div id="forecast-row">
+
+                <!-- Card 1 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Mon</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Tue</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Wed</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Thu</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Fri</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Sat</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="forecast-card">
+                    <p class="fc-day skeleton">Sun</p>
+                    <p class="fc-icon skeleton">⛅</p>
+                    <p class="fc-high skeleton">--°</p>
+                    <p class="fc-low skeleton">--°</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
