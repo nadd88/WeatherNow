@@ -17,17 +17,76 @@ const humidity = document.getElementById("humidity");
 const windSpeed = document.getElementById("wind-speed");
 
 // Lookup table for weather codes
-// Converts API numbers into readable text + emoji
 const weatherLookup = {
-  0: { text: "Clear Sky", icon: "☀️" },
-  1: { text: "Mainly Clear", icon: "🌤️" },
-  2: { text: "Partly Cloudy", icon: "⛅" },
-  3: { text: "Overcast", icon: "☁️" },
-  61: { text: "Rain", icon: "🌧️" },
-  63: { text: "Moderate Rain", icon: "🌧️" },
-  65: { text: "Heavy Rain", icon: "🌧️" },
-  95: { text: "Thunderstorm", icon: "⛈️" }
+  0:  { text: "Clear Sky",       icon: "☀️"  },
+  1:  { text: "Mainly Clear",    icon: "🌤️" },
+  2:  { text: "Partly Cloudy",   icon: "⛅"  },
+  3:  { text: "Overcast",        icon: "☁️"  },
+  61: { text: "Rain",            icon: "🌧️" },
+  63: { text: "Moderate Rain",   icon: "🌧️" },
+  65: { text: "Heavy Rain",      icon: "🌧️" },
+  95: { text: "Thunderstorm",    icon: "⛈️" }
 };
+
+// =============================================
+// TASK 4 : STEP 1 - Input validation
+// Shows a message if input is less than 2 chars
+// =============================================
+function validateInput(city) {
+  if (!city || city.length < 2) {
+    alert("Please enter at least 2 characters.");
+    return false;
+  }
+  return true;
+}
+
+// =============================================
+// TASK 4 : STEP 2 - AbortController timeout
+// Cancels the request if it takes over 10 seconds
+// =============================================
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    // Task 4 : Step 3 - HTTP error handling
+    if (!response.ok) {
+      throw new Error("HTTP Error " + response.status);
+    }
+
+    return response;
+
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    // If AbortController cancelled the request
+    if (error.name === "AbortError") {
+      throw new Error("Request timed out. Please try again.");
+    }
+
+    throw error;
+  }
+}
+
+// =============================================
+// TASK 4 : STEP 4 - Debounce
+// Waits 500ms after typing stops before searching
+// =============================================
+let debounceTimer = null;
+
+searchInput.addEventListener("input", function () {
+  clearTimeout(debounceTimer);
+
+  debounceTimer = setTimeout(() => {
+    const city = searchInput.value.trim();
+    if (validateInput(city)) {
+      getWeather();
+    }
+  }, 500);
+});
 
 // Run function when button clicked
 searchButton.addEventListener("click", getWeather);
@@ -35,88 +94,60 @@ searchButton.addEventListener("click", getWeather);
 // Main async function
 async function getWeather() {
 
-  // Remove spaces from user input
   const city = searchInput.value.trim();
+
+  // Task 4 : validate before making any API call
+  if (!validateInput(city)) return;
 
   try {
 
     // -----------------------------
     // STEP 1 : GEOCODING API
-    // Converts city into lat + lon
+    // Now uses fetchWithTimeout instead of plain fetch
     // -----------------------------
     const geoUrl =
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`;
 
-    const geoResponse = await fetch(geoUrl);
-
-    // Handle HTTP errors
-    if (!geoResponse.ok) {
-      throw new Error("HTTP Error " + geoResponse.status);
-    }
-
+    const geoResponse = await fetchWithTimeout(geoUrl);
     const geoData = await geoResponse.json();
 
-    // If no city found
+    // If no city found — show error in UI, do NOT throw
     if (!geoData.results || geoData.results.length === 0) {
       cityName.textContent = "City not found";
       return;
     }
 
-    // Extract city coordinates
-    const lat = geoData.results[0].latitude;
-    const lon = geoData.results[0].longitude;
+    const lat  = geoData.results[0].latitude;
+    const lon  = geoData.results[0].longitude;
     const name = geoData.results[0].name;
 
     // -----------------------------
     // STEP 2 : WEATHER API
+    // Now uses fetchWithTimeout instead of plain fetch
     // -----------------------------
     const weatherUrl =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
 
-    const weatherResponse = await fetch(weatherUrl);
-
-    if (!weatherResponse.ok) {
-      throw new Error("HTTP Error " + weatherResponse.status);
-    }
-
+    const weatherResponse = await fetchWithTimeout(weatherUrl);
     const weatherData = await weatherResponse.json();
 
-    // Get weather code from API
     const code = weatherData.current_weather.weathercode;
+    const info = weatherLookup[code] || { text: "Unknown", icon: "❓" };
 
-    // Convert code using lookup table
-    const info = weatherLookup[code] || {
-      text: "Unknown",
-      icon: "❓"
-    };
-
-    // Show hidden sections
     weatherCard.classList.remove("hidden");
     forecastSection.classList.remove("hidden");
 
-    // Display data in UI
-    cityName.textContent = name;
-    temperature.textContent =
-      weatherData.current_weather.temperature + "°C";
-
-    description.textContent = info.text;
-    weatherIcon.textContent = info.icon;
+    cityName.textContent     = name;
+    temperature.textContent  = weatherData.current_weather.temperature + "°C";
+    description.textContent  = info.text;
+    weatherIcon.textContent  = info.icon;
 
     getLocalTime(weatherData.timezone);
-    
-    humidity.textContent =
-      "Humidity: " +
-      weatherData.hourly.relativehumidity_2m[0] +
-      "%";
 
-    windSpeed.textContent =
-      "Wind Speed: " +
-      weatherData.current_weather.windspeed +
-      " km/h";
+    humidity.textContent  = "Humidity: "    + weatherData.hourly.relativehumidity_2m[0] + "%";
+    windSpeed.textContent = "Wind Speed: "  + weatherData.current_weather.windspeed + " km/h";
 
   } catch (error) {
-
-    // Network or HTTP errors
     alert("Error: " + error.message);
   }
 }
@@ -125,36 +156,23 @@ async function getWeather() {
 // TASK 3 : JQUERY AJAX LOCAL TIME API
 // ===================================
 
-// Function to get time using timezone
 function getLocalTime(timezone) {
 
   $.getJSON(`https://worldtimeapi.org/api/timezone/${timezone}`)
 
-    // If request successful
     .done(function (data) {
-
       $("#local-time").text(
-        "Local Time: " +
-        new Date(data.datetime).toLocaleTimeString()
+        "Local Time: " + new Date(data.datetime).toLocaleTimeString()
       );
     })
 
-    // If request fails
     .fail(function () {
-
-      // Use browser local time
       $("#local-time").text(
-        "Local Time: " +
-        new Date().toLocaleTimeString()
+        "Local Time: " + new Date().toLocaleTimeString()
       );
     })
 
-    // Runs always (success or fail)
     .always(function () {
-
-      console.log(
-        "Time API request completed:",
-        new Date()
-      );
+      console.log("Time API request completed:", new Date());
     });
 }
